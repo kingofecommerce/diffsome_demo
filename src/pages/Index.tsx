@@ -1,4 +1,5 @@
 import { usePosts } from "@/hooks/usePosts";
+import { Header } from "@/components/Header";
 import { BoardHeader } from "@/components/BoardHeader";
 import { PostList } from "@/components/PostList";
 import { LoadingState } from "@/components/LoadingState";
@@ -10,6 +11,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <Header />
       <div className="max-w-3xl mx-auto px-4 py-12">
         <BoardHeader total={data?.meta.total ?? 0} />
         
