@@ -1,7 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
-import { LogIn, LogOut, User } from "lucide-react";
+import { LogIn, LogOut, User, PenSquare, Home } from "lucide-react";
 
 export function Header() {
   const { user, isAuthenticated, logout } = useAuth();
@@ -15,12 +15,29 @@ export function Header() {
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
-        <Link to="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-          <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-            <span className="text-primary-foreground font-bold text-sm">P</span>
-          </div>
-          <span className="font-semibold text-lg text-foreground">Promptly</span>
-        </Link>
+        <div className="flex items-center gap-6">
+          <Link to="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+            <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+              <span className="text-primary-foreground font-bold text-sm">P</span>
+            </div>
+            <span className="font-semibold text-lg text-foreground">Promptly</span>
+          </Link>
+          
+          <nav className="flex items-center gap-1">
+            <Button variant="ghost" size="sm" asChild>
+              <Link to="/">
+                <Home className="w-4 h-4 mr-1.5" />
+                홈
+              </Link>
+            </Button>
+            <Button variant="ghost" size="sm" asChild>
+              <Link to="/write">
+                <PenSquare className="w-4 h-4 mr-1.5" />
+                글쓰기
+              </Link>
+            </Button>
+          </nav>
+        </div>
 
         <div className="flex items-center gap-3">
           {isAuthenticated ? (
