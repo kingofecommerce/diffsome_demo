@@ -118,7 +118,7 @@ const Index = () => {
     <div className="min-h-screen bg-background flex flex-col">
       <Header />
       <div className="flex-1 max-w-3xl mx-auto px-4 py-12 w-full">
-        <BoardHeader total={data?.meta.total ?? 0} />
+        <BoardHeader total={data?.meta?.total ?? data?.data?.length ?? 0} />
         
         {/* 검색 폼 */}
         <div className="flex justify-end mb-6">
@@ -149,7 +149,7 @@ const Index = () => {
               "{searchQuery}" 검색 결과
             </span>
             <span className="text-xs font-medium bg-primary/10 text-primary px-2 py-0.5 rounded-full">
-              {data?.meta.total ?? 0}건
+              {data?.meta?.total ?? data?.data?.length ?? 0}건
             </span>
           </div>
         )}
