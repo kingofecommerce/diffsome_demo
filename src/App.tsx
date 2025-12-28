@@ -7,6 +7,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import Index from "./pages/Index";
 import PostDetail from "./pages/PostDetail";
 import Login from "./pages/Login";
+import WritePost from "./pages/WritePost";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -22,6 +23,7 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/posts/:id" element={<PostDetail />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/write" element={<WritePost />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
