@@ -7,6 +7,9 @@ import { PostList } from "@/components/PostList";
 import { LoadingState } from "@/components/LoadingState";
 import { ErrorState } from "@/components/ErrorState";
 import { EmptyState } from "@/components/EmptyState";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Search } from "lucide-react";
 import {
   Pagination,
   PaginationContent,
@@ -19,7 +22,24 @@ import {
 
 const Index = () => {
   const [currentPage, setCurrentPage] = useState(1);
-  const { data, isLoading, isError, error, refetch } = usePosts({ page: currentPage });
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchInput, setSearchInput] = useState("");
+  const { data, isLoading, isError, error, refetch } = usePosts({ 
+    page: currentPage, 
+    search: searchQuery || undefined 
+  });
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    setSearchQuery(searchInput);
+    setCurrentPage(1);
+  };
+
+  const handleClearSearch = () => {
+    setSearchInput("");
+    setSearchQuery("");
+    setCurrentPage(1);
+  };
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -99,6 +119,34 @@ const Index = () => {
       <Header />
       <div className="flex-1 max-w-3xl mx-auto px-4 py-12 w-full">
         <BoardHeader total={data?.meta.total ?? 0} />
+        
+        {/* 검색 폼 */}
+        <form onSubmit={handleSearch} className="flex gap-2 mb-6">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              type="text"
+              placeholder="검색어를 입력하세요..."
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
+              className="pl-10"
+            />
+          </div>
+          <Button type="submit" variant="default">
+            검색
+          </Button>
+          {searchQuery && (
+            <Button type="button" variant="outline" onClick={handleClearSearch}>
+              초기화
+            </Button>
+          )}
+        </form>
+        
+        {searchQuery && (
+          <p className="text-sm text-muted-foreground mb-4">
+            "{searchQuery}" 검색 결과: {data?.meta.total ?? 0}건
+          </p>
+        )}
         
         {isLoading && <LoadingState />}
         
