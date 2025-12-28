@@ -1,9 +1,7 @@
-import { Link } from "react-router-dom";
-
 export function Footer() {
   return (
     <footer className="border-t border-border/40 bg-muted/30">
-      <div className="max-w-5xl mx-auto px-4 py-8">
+      <div className="max-w-5xl mx-auto px-4 py-6">
         <div className="flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
             <div className="w-6 h-6 bg-primary rounded-md flex items-center justify-center">
@@ -11,15 +9,6 @@ export function Footer() {
             </div>
             <span className="font-medium text-foreground">Promptly</span>
           </div>
-          
-          <nav className="flex items-center gap-6 text-sm text-muted-foreground">
-            <Link to="/" className="hover:text-foreground transition-colors">
-              홈
-            </Link>
-            <Link to="/write" className="hover:text-foreground transition-colors">
-              글쓰기
-            </Link>
-          </nav>
           
           <p className="text-sm text-muted-foreground">
             © {new Date().getFullYear()} Promptly. All rights reserved.
