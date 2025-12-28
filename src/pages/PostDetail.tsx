@@ -1,5 +1,6 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { ArrowLeft, User, Clock, Eye, Home, ChevronRight, Pin } from "lucide-react";
+import { ArrowLeft, User, Clock, Eye, Home, ChevronRight, Pin, Edit } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -38,6 +39,7 @@ function PostDetailSkeleton() {
 export default function PostDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
   const { data, isLoading, error } = usePostDetail(id || "");
 
   if (isLoading) {
@@ -157,7 +159,7 @@ export default function PostDetail() {
         </Card>
 
         {/* Footer Navigation */}
-        <div className="mt-8 flex justify-center animate-fade-in" style={{ animationDelay: "200ms" }}>
+        <div className="mt-8 flex justify-center gap-3 animate-fade-in" style={{ animationDelay: "200ms" }}>
           <Button 
             variant="outline" 
             onClick={() => navigate("/")}
@@ -166,6 +168,15 @@ export default function PostDetail() {
             <ArrowLeft className="w-4 h-4" />
             목록으로 돌아가기
           </Button>
+          {isAuthenticated && (
+            <Button 
+              onClick={() => navigate(`/posts/${id}/edit`)}
+              className="gap-2"
+            >
+              <Edit className="w-4 h-4" />
+              수정하기
+            </Button>
+          )}
         </div>
       </div>
     </div>
