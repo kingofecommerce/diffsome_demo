@@ -21,6 +21,7 @@ import {
 import { usePostDetail } from "@/hooks/usePostDetail";
 import { useDeletePost } from "@/hooks/useDeletePost";
 import { useToast } from "@/hooks/use-toast";
+import { CommentList } from "@/components/CommentList";
 import { formatDistanceToNow, format } from "date-fns";
 import { ko } from "date-fns/locale";
 
@@ -194,6 +195,9 @@ export default function PostDetail() {
             />
           </CardContent>
         </Card>
+
+        {/* Comment List */}
+        {id && <CommentList postId={id} />}
 
         {/* Footer Navigation */}
         <div className="mt-8 flex justify-center gap-3 animate-fade-in" style={{ animationDelay: "200ms" }}>
