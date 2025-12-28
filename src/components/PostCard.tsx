@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import type { Post } from "@/types/board";
 import { formatDistanceToNow } from "date-fns";
 import { ko } from "date-fns/locale";
+import { useNavigate } from "react-router-dom";
 
 interface PostCardProps {
   post: Post;
@@ -11,15 +12,22 @@ interface PostCardProps {
 }
 
 export function PostCard({ post, index }: PostCardProps) {
+  const navigate = useNavigate();
+  
   const formattedDate = formatDistanceToNow(new Date(post.created_at), {
     addSuffix: true,
     locale: ko,
   });
 
+  const handleClick = () => {
+    navigate(`/posts/${post.id}`);
+  };
+
   return (
     <Card 
       className="group cursor-pointer transition-all duration-300 hover:shadow-lg hover:shadow-primary/5 hover:-translate-y-1 border-border/50 bg-card animate-slide-up"
       style={{ animationDelay: `${index * 80}ms` }}
+      onClick={handleClick}
     >
       <CardContent className="p-5">
         <div className="flex items-start justify-between gap-4">
