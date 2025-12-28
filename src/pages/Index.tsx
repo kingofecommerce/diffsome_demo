@@ -1,5 +1,6 @@
 import { usePosts } from "@/hooks/usePosts";
 import { Header } from "@/components/Header";
+import { Footer } from "@/components/Footer";
 import { BoardHeader } from "@/components/BoardHeader";
 import { PostList } from "@/components/PostList";
 import { LoadingState } from "@/components/LoadingState";
@@ -10,9 +11,9 @@ const Index = () => {
   const { data, isLoading, isError, error, refetch } = usePosts();
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background flex flex-col">
       <Header />
-      <div className="max-w-3xl mx-auto px-4 py-12">
+      <div className="flex-1 max-w-3xl mx-auto px-4 py-12 w-full">
         <BoardHeader total={data?.meta.total ?? 0} />
         
         {isLoading && <LoadingState />}
@@ -28,6 +29,7 @@ const Index = () => {
         
         {data && data.data.length > 0 && <PostList posts={data.data} />}
       </div>
+      <Footer />
     </div>
   );
 };
