@@ -12,7 +12,7 @@ import { z } from "zod";
 const registerSchema = z.object({
   name: z.string().min(1, "이름을 입력해주세요.").max(100, "이름은 100자 이내로 입력해주세요."),
   email: z.string().email("올바른 이메일 주소를 입력해주세요."),
-  password: z.string().min(6, "비밀번호는 6자 이상이어야 합니다."),
+  password: z.string().min(8, "비밀번호는 8자 이상이어야 합니다."),
   passwordConfirmation: z.string().min(1, "비밀번호 확인을 입력해주세요."),
 }).refine((data) => data.password === data.passwordConfirmation, {
   message: "비밀번호가 일치하지 않습니다.",
