@@ -9,7 +9,7 @@ import { ErrorState } from "@/components/ErrorState";
 import { EmptyState } from "@/components/EmptyState";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Search } from "lucide-react";
+import { Search, X } from "lucide-react";
 import {
   Pagination,
   PaginationContent,
@@ -121,31 +121,37 @@ const Index = () => {
         <BoardHeader total={data?.meta.total ?? 0} />
         
         {/* 검색 폼 */}
-        <form onSubmit={handleSearch} className="flex gap-2 mb-6">
-          <div className="relative flex-1">
+        <div className="flex justify-end mb-6">
+          <form onSubmit={handleSearch} className="relative w-64">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
               type="text"
-              placeholder="검색어를 입력하세요..."
+              placeholder="검색..."
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
-              className="pl-10"
+              className="pl-9 pr-8 h-9 text-sm"
             />
-          </div>
-          <Button type="submit" variant="default">
-            검색
-          </Button>
-          {searchQuery && (
-            <Button type="button" variant="outline" onClick={handleClearSearch}>
-              초기화
-            </Button>
-          )}
-        </form>
+            {searchInput && (
+              <button
+                type="button"
+                onClick={handleClearSearch}
+                className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            )}
+          </form>
+        </div>
         
         {searchQuery && (
-          <p className="text-sm text-muted-foreground mb-4">
-            "{searchQuery}" 검색 결과: {data?.meta.total ?? 0}건
-          </p>
+          <div className="flex items-center gap-2 mb-4">
+            <span className="text-sm text-muted-foreground">
+              "{searchQuery}" 검색 결과
+            </span>
+            <span className="text-xs font-medium bg-primary/10 text-primary px-2 py-0.5 rounded-full">
+              {data?.meta.total ?? 0}건
+            </span>
+          </div>
         )}
         
         {isLoading && <LoadingState />}
