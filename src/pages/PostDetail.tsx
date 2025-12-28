@@ -1,12 +1,26 @@
+import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { ArrowLeft, User, Clock, Eye, Home, ChevronRight, Pin, Edit } from "lucide-react";
+import { ArrowLeft, User, Clock, Eye, Home, ChevronRight, Pin, Edit, Trash2, Loader2 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { usePostDetail } from "@/hooks/usePostDetail";
+import { useDeletePost } from "@/hooks/useDeletePost";
+import { useToast } from "@/hooks/use-toast";
 import { formatDistanceToNow, format } from "date-fns";
 import { ko } from "date-fns/locale";
 
@@ -41,6 +55,29 @@ export default function PostDetail() {
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
   const { data, isLoading, error } = usePostDetail(id || "");
+  const deletePost = useDeletePost();
+  const { toast } = useToast();
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+
+  const handleDelete = async () => {
+    if (!id) return;
+    
+    try {
+      await deletePost.mutateAsync(id);
+      toast({
+        title: "삭제 완료",
+        description: "게시글이 성공적으로 삭제되었습니다.",
+      });
+      navigate("/");
+    } catch (error) {
+      toast({
+        title: "삭제 실패",
+        description: error instanceof Error ? error.message : "게시글 삭제에 실패했습니다.",
+        variant: "destructive",
+      });
+    }
+    setIsDeleteDialogOpen(false);
+  };
 
   if (isLoading) {
     return <PostDetailSkeleton />;
@@ -169,13 +206,48 @@ export default function PostDetail() {
             목록으로 돌아가기
           </Button>
           {isAuthenticated && (
-            <Button 
-              onClick={() => navigate(`/posts/${id}/edit`)}
-              className="gap-2"
-            >
-              <Edit className="w-4 h-4" />
-              수정하기
-            </Button>
+            <>
+              <Button 
+                onClick={() => navigate(`/posts/${id}/edit`)}
+                className="gap-2"
+              >
+                <Edit className="w-4 h-4" />
+                수정하기
+              </Button>
+              <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+                <AlertDialogTrigger asChild>
+                  <Button variant="destructive" className="gap-2">
+                    <Trash2 className="w-4 h-4" />
+                    삭제하기
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>게시글 삭제</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      정말로 이 게시글을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>취소</AlertDialogCancel>
+                    <AlertDialogAction
+                      onClick={handleDelete}
+                      disabled={deletePost.isPending}
+                      className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                    >
+                      {deletePost.isPending ? (
+                        <>
+                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                          삭제 중...
+                        </>
+                      ) : (
+                        "삭제"
+                      )}
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </>
           )}
         </div>
       </div>
