@@ -6,21 +6,33 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { Mail, Lock, ArrowLeft, Loader2 } from "lucide-react";
+import { Mail, Lock, User, ArrowLeft, Loader2 } from "lucide-react";
 import { z } from "zod";
 
-const loginSchema = z.object({
+const registerSchema = z.object({
+  name: z.string().min(1, "이름을 입력해주세요.").max(100, "이름은 100자 이내로 입력해주세요."),
   email: z.string().email("올바른 이메일 주소를 입력해주세요."),
-  password: z.string().min(1, "비밀번호를 입력해주세요."),
+  password: z.string().min(6, "비밀번호는 6자 이상이어야 합니다."),
+  passwordConfirmation: z.string().min(1, "비밀번호 확인을 입력해주세요."),
+}).refine((data) => data.password === data.passwordConfirmation, {
+  message: "비밀번호가 일치하지 않습니다.",
+  path: ["passwordConfirmation"],
 });
 
-const Login = () => {
+const Register = () => {
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [passwordConfirmation, setPasswordConfirmation] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
+  const [errors, setErrors] = useState<{ 
+    name?: string; 
+    email?: string; 
+    password?: string; 
+    passwordConfirmation?: string 
+  }>({});
   
-  const { login } = useAuth();
+  const { register } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -28,30 +40,30 @@ const Login = () => {
     e.preventDefault();
     setErrors({});
 
-    const result = loginSchema.safeParse({ email, password });
+    const result = registerSchema.safeParse({ name, email, password, passwordConfirmation });
     if (!result.success) {
-      const fieldErrors: { email?: string; password?: string } = {};
+      const fieldErrors: typeof errors = {};
       result.error.errors.forEach((err) => {
-        if (err.path[0] === "email") fieldErrors.email = err.message;
-        if (err.path[0] === "password") fieldErrors.password = err.message;
+        const field = err.path[0] as keyof typeof errors;
+        fieldErrors[field] = err.message;
       });
       setErrors(fieldErrors);
       return;
     }
 
     setIsLoading(true);
-    const response = await login(email, password);
+    const response = await register(name, email, password, passwordConfirmation);
     setIsLoading(false);
 
     if (response.success) {
       toast({
-        title: "로그인 성공",
-        description: "환영합니다!",
+        title: "회원가입 성공",
+        description: "환영합니다! 로그인되었습니다.",
       });
       navigate("/");
     } else {
       toast({
-        title: "로그인 실패",
+        title: "회원가입 실패",
         description: response.message,
         variant: "destructive",
       });
@@ -74,13 +86,32 @@ const Login = () => {
             <div className="w-12 h-12 bg-primary rounded-xl flex items-center justify-center mx-auto mb-2">
               <span className="text-primary-foreground font-bold text-xl">P</span>
             </div>
-            <CardTitle className="text-2xl font-bold">로그인</CardTitle>
+            <CardTitle className="text-2xl font-bold">회원가입</CardTitle>
             <CardDescription>
-              이메일과 비밀번호를 입력하여 로그인하세요
+              새로운 계정을 만들어 시작하세요
             </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="name">이름</Label>
+                <div className="relative">
+                  <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                  <Input
+                    id="name"
+                    type="text"
+                    placeholder="홍길동"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    className={`pl-10 ${errors.name ? "border-destructive" : ""}`}
+                    disabled={isLoading}
+                  />
+                </div>
+                {errors.name && (
+                  <p className="text-sm text-destructive">{errors.name}</p>
+                )}
+              </div>
+
               <div className="space-y-2">
                 <Label htmlFor="email">이메일</Label>
                 <div className="relative">
@@ -119,21 +150,40 @@ const Login = () => {
                 )}
               </div>
 
+              <div className="space-y-2">
+                <Label htmlFor="passwordConfirmation">비밀번호 확인</Label>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                  <Input
+                    id="passwordConfirmation"
+                    type="password"
+                    placeholder="••••••••"
+                    value={passwordConfirmation}
+                    onChange={(e) => setPasswordConfirmation(e.target.value)}
+                    className={`pl-10 ${errors.passwordConfirmation ? "border-destructive" : ""}`}
+                    disabled={isLoading}
+                  />
+                </div>
+                {errors.passwordConfirmation && (
+                  <p className="text-sm text-destructive">{errors.passwordConfirmation}</p>
+                )}
+              </div>
+
               <Button type="submit" className="w-full" disabled={isLoading}>
                 {isLoading ? (
                   <>
                     <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    로그인 중...
+                    가입 중...
                   </>
                 ) : (
-                  "로그인"
+                  "회원가입"
                 )}
               </Button>
 
               <p className="text-center text-sm text-muted-foreground">
-                계정이 없으신가요?{" "}
-                <Link to="/register" className="text-primary hover:underline">
-                  회원가입
+                이미 계정이 있으신가요?{" "}
+                <Link to="/login" className="text-primary hover:underline">
+                  로그인
                 </Link>
               </p>
             </form>
@@ -144,4 +194,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Register;

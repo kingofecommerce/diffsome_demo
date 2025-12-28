@@ -7,6 +7,7 @@ interface AuthContextType {
   isAuthenticated: boolean;
   isLoading: boolean;
   login: (email: string, password: string) => Promise<{ success: boolean; message: string }>;
+  register: (name: string, email: string, password: string, passwordConfirmation: string) => Promise<{ success: boolean; message: string }>;
   logout: () => void;
 }
 
@@ -61,6 +62,39 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const register = async (name: string, email: string, password: string, passwordConfirmation: string) => {
+    try {
+      const response = await fetch("https://promptly.webbyon.com/api/demo/auth/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name,
+          email,
+          password,
+          password_confirmation: passwordConfirmation,
+        }),
+      });
+
+      const data: AuthResponse = await response.json();
+
+      if (data.success) {
+        setUser(data.data.user);
+        setToken(data.data.token);
+        localStorage.setItem(
+          AUTH_STORAGE_KEY,
+          JSON.stringify({ user: data.data.user, token: data.data.token })
+        );
+        return { success: true, message: data.message };
+      } else {
+        return { success: false, message: data.message || "회원가입에 실패했습니다." };
+      }
+    } catch (error) {
+      return { success: false, message: "네트워크 오류가 발생했습니다." };
+    }
+  };
+
   const logout = async () => {
     try {
       if (token) {
@@ -89,6 +123,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         isAuthenticated: !!user && !!token,
         isLoading,
         login,
+        register,
         logout,
       }}
     >
