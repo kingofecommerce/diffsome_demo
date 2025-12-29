@@ -10,6 +10,7 @@ import { ErrorState } from "@/components/ErrorState";
 import { useForm } from "@/hooks/useForm";
 import { useSubmitForm } from "@/hooks/useSubmitForm";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/contexts/AuthContext";
 import { ArrowLeft, Send, CheckCircle } from "lucide-react";
 
 const CONTACT_FORM_SLUG = "ask"; // API에서 사용하는 폼 슬러그
@@ -17,6 +18,7 @@ const CONTACT_FORM_SLUG = "ask"; // API에서 사용하는 폼 슬러그
 const Contact = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { user } = useAuth();
   const [formValues, setFormValues] = useState<Record<string, unknown>>({});
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -75,9 +77,14 @@ const Contact = () => {
     }
 
     try {
+      const submitData = {
+        ...formValues,
+        ...(user?.id && { member_id: user.id }),
+      };
+
       await submitForm.mutateAsync({
         slug: CONTACT_FORM_SLUG,
-        data: formValues,
+        data: submitData,
       });
 
       setIsSubmitted(true);
