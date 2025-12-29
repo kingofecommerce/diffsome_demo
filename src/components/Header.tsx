@@ -1,7 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
-import { LogIn, LogOut, User, PenSquare, Home, MessageSquare } from "lucide-react";
+import { LogIn, LogOut, User, PenSquare, Home, MessageSquare, ShoppingBag } from "lucide-react";
 
 export function Header() {
   const { user, isAuthenticated, logout } = useAuth();
@@ -34,6 +34,12 @@ export function Header() {
               <Link to="/write">
                 <PenSquare className="w-4 h-4 mr-1.5" />
                 글쓰기
+              </Link>
+            </Button>
+            <Button variant="ghost" size="sm" asChild>
+              <Link to="/products">
+                <ShoppingBag className="w-4 h-4 mr-1.5" />
+                상품
               </Link>
             </Button>
             <Button variant="ghost" size="sm" asChild>
