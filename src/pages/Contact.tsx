@@ -12,7 +12,7 @@ import { useSubmitForm } from "@/hooks/useSubmitForm";
 import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft, Send, CheckCircle } from "lucide-react";
 
-const CONTACT_FORM_SLUG = "contact"; // API에서 사용하는 폼 슬러그
+const CONTACT_FORM_SLUG = "ask"; // API에서 사용하는 폼 슬러그
 
 const Contact = () => {
   const navigate = useNavigate();
