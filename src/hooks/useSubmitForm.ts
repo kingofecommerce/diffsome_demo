@@ -6,16 +6,23 @@ const API_BASE_URL = "https://promptly.webbyon.com/api/demo/public";
 interface SubmitFormParams {
   slug: string;
   data: Record<string, unknown>;
+  token?: string | null;
 }
 
 export const useSubmitForm = () => {
   return useMutation<FormSubmitResponse, Error, SubmitFormParams>({
-    mutationFn: async ({ slug, data }) => {
+    mutationFn: async ({ slug, data, token }) => {
+      const headers: Record<string, string> = {
+        "Content-Type": "application/json",
+      };
+
+      if (token) {
+        headers["Authorization"] = `Bearer ${token}`;
+      }
+
       const response = await fetch(`${API_BASE_URL}/forms/${slug}/submit`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers,
         body: JSON.stringify(data),
       });
       
