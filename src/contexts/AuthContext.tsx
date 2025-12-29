@@ -1,6 +1,16 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { User, AuthResponse } from "@/types/auth";
 
+interface SocialAuthResponse {
+  success: boolean;
+  message: string;
+  data: {
+    token: string;
+    user: User;
+    is_new_user: boolean;
+  };
+}
+
 interface AuthContextType {
   user: User | null;
   token: string | null;
@@ -9,6 +19,8 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<{ success: boolean; message: string }>;
   register: (name: string, email: string, password: string, passwordConfirmation: string) => Promise<{ success: boolean; message: string }>;
   logout: () => void;
+  getGoogleAuthUrl: () => Promise<{ success: boolean; authUrl?: string; message?: string }>;
+  handleGoogleCallback: (code: string) => Promise<{ success: boolean; message: string }>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -115,6 +127,48 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const getGoogleAuthUrl = async () => {
+    try {
+      const response = await fetch("https://promptly.webbyon.com/api/demo/auth/social/google/url");
+      const data = await response.json();
+      
+      if (data.data?.auth_url) {
+        return { success: true, authUrl: data.data.auth_url };
+      }
+      return { success: false, message: "Google 로그인 URL을 가져오는데 실패했습니다." };
+    } catch (error) {
+      return { success: false, message: "네트워크 오류가 발생했습니다." };
+    }
+  };
+
+  const handleGoogleCallback = async (code: string) => {
+    try {
+      const response = await fetch("https://promptly.webbyon.com/api/demo/auth/social/google/callback", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ code }),
+      });
+
+      const data: SocialAuthResponse = await response.json();
+
+      if (data.success) {
+        setUser(data.data.user);
+        setToken(data.data.token);
+        localStorage.setItem(
+          AUTH_STORAGE_KEY,
+          JSON.stringify({ user: data.data.user, token: data.data.token })
+        );
+        return { success: true, message: data.message };
+      } else {
+        return { success: false, message: data.message || "소셜 로그인에 실패했습니다." };
+      }
+    } catch (error) {
+      return { success: false, message: "네트워크 오류가 발생했습니다." };
+    }
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -125,6 +179,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         login,
         register,
         logout,
+        getGoogleAuthUrl,
+        handleGoogleCallback,
       }}
     >
       {children}
