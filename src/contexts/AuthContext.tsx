@@ -21,6 +21,7 @@ interface AuthContextType {
   logout: () => void;
   getGoogleAuthUrl: () => Promise<{ success: boolean; authUrl?: string; message?: string }>;
   handleGoogleCallback: (code: string) => Promise<{ success: boolean; message: string }>;
+  handleSocialCallback: (token: string, user: User) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -169,6 +170,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const handleSocialCallback = (token: string, user: User) => {
+    setUser(user);
+    setToken(token);
+    localStorage.setItem(
+      AUTH_STORAGE_KEY,
+      JSON.stringify({ user, token })
+    );
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -181,6 +191,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         logout,
         getGoogleAuthUrl,
         handleGoogleCallback,
+        handleSocialCallback,
       }}
     >
       {children}
