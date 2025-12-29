@@ -10,6 +10,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import WritePost from "./pages/WritePost";
 import EditPost from "./pages/EditPost";
+import GoogleCallback from "./pages/GoogleCallback";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -28,6 +29,7 @@ const App = () => (
             <Route path="/register" element={<Register />} />
             <Route path="/write" element={<WritePost />} />
             <Route path="/posts/:id/edit" element={<EditPost />} />
+            <Route path="/auth/google/callback" element={<GoogleCallback />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
