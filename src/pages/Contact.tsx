@@ -18,7 +18,7 @@ const CONTACT_FORM_SLUG = "ask"; // API에서 사용하는 폼 슬러그
 const Contact = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { user } = useAuth();
+  const { user, token } = useAuth();
   const [formValues, setFormValues] = useState<Record<string, unknown>>({});
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -85,6 +85,7 @@ const Contact = () => {
       await submitForm.mutateAsync({
         slug: CONTACT_FORM_SLUG,
         data: submitData,
+        token,
       });
 
       setIsSubmitted(true);
