@@ -11,6 +11,7 @@ import Register from "./pages/Register";
 import WritePost from "./pages/WritePost";
 import EditPost from "./pages/EditPost";
 import AuthCallback from "./pages/AuthCallback";
+import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -30,6 +31,7 @@ const App = () => (
             <Route path="/write" element={<WritePost />} />
             <Route path="/posts/:id/edit" element={<EditPost />} />
             <Route path="/auth/callback" element={<AuthCallback />} />
+            <Route path="/contact" element={<Contact />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
