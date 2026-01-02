@@ -11,12 +11,12 @@ export function usePosts(params: UsePostsParams = {}) {
   return useQuery({
     queryKey: ["posts", params],
     queryFn: async () => {
-      const response = await promptly.boards.listPosts('first', {
-        page: params.page,
-        per_page: params.perPage,
+      const { data: posts, meta } = await promptly.boards.listPosts('first', {
+        page: params.page ?? 1,
+        per_page: params.perPage ?? 10,
         search: params.search,
       });
-      return response;
+      return { data: posts, meta };
     },
     staleTime: 1000 * 60 * 5, // 5 minutes
   });
