@@ -1,7 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Eye, Package } from "lucide-react";
-import type { Product } from "@/types/product";
+import { Package } from "lucide-react";
+import type { Product } from "@back23/promptly-sdk";
 
 interface ProductCardProps {
   product: Product;
@@ -55,20 +55,14 @@ export function ProductCard({ product }: ProductCardProps) {
             )}
           </div>
           
-          <div className="flex items-center gap-3 text-xs text-muted-foreground">
-            {product.view_count !== null && (
-              <div className="flex items-center gap-1">
-                <Eye className="w-3 h-3" />
-                <span>{product.view_count}</span>
-              </div>
-            )}
-            {product.track_inventory && product.stock_quantity > 0 && (
+          {product.track_inventory && product.stock_quantity > 0 && (
+            <div className="flex items-center gap-3 text-xs text-muted-foreground">
               <div className="flex items-center gap-1">
                 <Package className="w-3 h-3" />
                 <span>재고 {product.stock_quantity}</span>
               </div>
-            )}
-          </div>
+            </div>
+          )}
           
           {product.sku && (
             <p className="text-xs text-muted-foreground">

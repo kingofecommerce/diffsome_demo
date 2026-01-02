@@ -1,8 +1,8 @@
 import { PostCard } from "./PostCard";
-import type { Post } from "@/types/board";
+import type { BoardPost } from "@back23/promptly-sdk";
 
 interface PostListProps {
-  posts: Post[];
+  posts: BoardPost[];
 }
 
 export function PostList({ posts }: PostListProps) {

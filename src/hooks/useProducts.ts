@@ -1,20 +1,15 @@
 import { useQuery } from "@tanstack/react-query";
-import type { Product, ProductListResponse } from "@/types/product";
+import { promptly } from "@/lib/promptly";
+import type { Product } from "@back23/promptly-sdk";
 
-const API_BASE_URL = "https://promptly.webbyon.com/api/demo/public";
+export type { Product } from "@back23/promptly-sdk";
 
 export const useProducts = (page: number = 1) => {
-  return useQuery<Product[], Error>({
+  return useQuery({
     queryKey: ["products", page],
     queryFn: async () => {
-      const response = await fetch(`${API_BASE_URL}/products?page=${page}`);
-      
-      if (!response.ok) {
-        throw new Error("상품 목록을 불러오는데 실패했습니다.");
-      }
-      
-      const result: ProductListResponse = await response.json();
-      return result.data;
+      const response = await promptly.shop.listProducts({ page });
+      return response.data;
     },
   });
 };
