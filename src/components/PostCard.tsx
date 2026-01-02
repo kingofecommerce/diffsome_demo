@@ -1,13 +1,13 @@
 import { Eye, User, Clock, Pin } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import type { Post } from "@/types/board";
+import type { BoardPost } from "@back23/promptly-sdk";
 import { formatDistanceToNow } from "date-fns";
 import { ko } from "date-fns/locale";
 import { useNavigate } from "react-router-dom";
 
 interface PostCardProps {
-  post: Post;
+  post: BoardPost;
   index: number;
 }
 
@@ -22,6 +22,8 @@ export function PostCard({ post, index }: PostCardProps) {
   const handleClick = () => {
     navigate(`/posts/${post.id}`);
   };
+
+  const authorName = post.member?.name || '익명';
 
   return (
     <Card 
@@ -51,7 +53,7 @@ export function PostCard({ post, index }: PostCardProps) {
             <div className="flex items-center gap-4 text-xs text-muted-foreground">
               <span className="flex items-center gap-1.5">
                 <User className="w-3.5 h-3.5" />
-                {post.author}
+                {authorName}
               </span>
               <span className="flex items-center gap-1.5">
                 <Clock className="w-3.5 h-3.5" />
@@ -59,7 +61,7 @@ export function PostCard({ post, index }: PostCardProps) {
               </span>
               <span className="flex items-center gap-1.5">
                 <Eye className="w-3.5 h-3.5" />
-                {post.views}
+                {post.view_count}
               </span>
             </div>
           </div>
