@@ -23,7 +23,7 @@ export function PostCard({ post, index }: PostCardProps) {
     navigate(`/posts/${post.id}`);
   };
 
-  const authorName = post.member?.name || '익명';
+  const authorName = post.author || '익명';
 
   return (
     <Card 
@@ -61,7 +61,7 @@ export function PostCard({ post, index }: PostCardProps) {
               </span>
               <span className="flex items-center gap-1.5">
                 <Eye className="w-3.5 h-3.5" />
-                {post.view_count}
+                {post.views ?? 0}
               </span>
             </div>
           </div>

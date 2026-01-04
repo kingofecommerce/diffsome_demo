@@ -166,7 +166,7 @@ export default function PostDetail() {
             <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
               <span className="flex items-center gap-1.5">
                 <User className="w-4 h-4 text-primary/70" />
-                <span className="font-medium text-foreground">{post.member?.name || '익명'}</span>
+                <span className="font-medium text-foreground">{post.author || '익명'}</span>
               </span>
               <span className="flex items-center gap-1.5" title={absoluteDate}>
                 <Clock className="w-4 h-4 text-primary/70" />
@@ -174,7 +174,7 @@ export default function PostDetail() {
               </span>
               <span className="flex items-center gap-1.5">
                 <Eye className="w-4 h-4 text-primary/70" />
-                조회 {post.view_count}
+                조회 {post.views ?? 0}
               </span>
             </div>
           </CardHeader>
