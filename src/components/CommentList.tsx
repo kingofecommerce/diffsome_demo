@@ -62,7 +62,7 @@ function ReplyItem({ reply, postId, onEdit, onDelete, isAuthenticated }: ReplyIt
         <div className="flex items-center gap-3 text-sm text-muted-foreground mb-2">
           <span className="flex items-center gap-1.5">
             <User className="w-3.5 h-3.5" />
-            <span className="font-medium text-foreground">{reply.author}</span>
+            <span className="font-medium text-foreground">{reply.author.name}</span>
           </span>
           <span className="flex items-center gap-1.5">
             <Clock className="w-3.5 h-3.5" />
@@ -116,7 +116,7 @@ function CommentItem({ comment, postId, onEdit, onDelete, onReply, isAuthenticat
         <div className="flex items-center gap-3 text-sm text-muted-foreground mb-3">
           <span className="flex items-center gap-1.5">
             <User className="w-4 h-4 text-primary/70" />
-            <span className="font-medium text-foreground">{comment.author}</span>
+            <span className="font-medium text-foreground">{comment.author.name}</span>
           </span>
           <span className="flex items-center gap-1.5">
             <Clock className="w-4 h-4 text-primary/70" />
@@ -129,7 +129,7 @@ function CommentItem({ comment, postId, onEdit, onDelete, onReply, isAuthenticat
               variant="ghost"
               size="sm"
               className="h-7 px-2 text-muted-foreground hover:text-foreground"
-              onClick={() => onReply(comment.id)}
+              onClick={() => onReply(String(comment.id))}
             >
               <Reply className="w-3.5 h-3.5" />
             </Button>
@@ -137,7 +137,7 @@ function CommentItem({ comment, postId, onEdit, onDelete, onReply, isAuthenticat
               variant="ghost"
               size="sm"
               className="h-7 px-2 text-muted-foreground hover:text-foreground"
-              onClick={() => onEdit(comment.id, comment.content)}
+              onClick={() => onEdit(String(comment.id), comment.content)}
             >
               <Edit className="w-3.5 h-3.5" />
             </Button>
@@ -145,7 +145,7 @@ function CommentItem({ comment, postId, onEdit, onDelete, onReply, isAuthenticat
               variant="ghost"
               size="sm"
               className="h-7 px-2 text-muted-foreground hover:text-destructive"
-              onClick={() => onDelete(comment.id)}
+              onClick={() => onDelete(String(comment.id))}
             >
               <Trash2 className="w-3.5 h-3.5" />
             </Button>

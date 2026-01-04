@@ -1,17 +1,8 @@
-export interface CommentReply {
-  id: number;
-  content: string;
-  author: string;
-  created_at: string;
-}
+import type { BoardComment } from "@back23/promptly-sdk";
 
-export interface Comment {
-  id: string;
-  content: string;
-  author: string;
-  created_at: string;
-  replies: CommentReply[];
-}
+// SDK의 BoardComment 타입 재export
+export type Comment = BoardComment;
+export type CommentReply = BoardComment;
 
 export interface CommentListResponse {
   success: boolean;
