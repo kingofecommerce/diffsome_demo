@@ -12,6 +12,7 @@ import { useSubmitForm } from "@/hooks/useSubmitForm";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { ArrowLeft, Send, CheckCircle } from "lucide-react";
+import type { FormField } from "@/types/form";
 
 const CONTACT_FORM_SLUG = "ask"; // API에서 사용하는 폼 슬러그
 
@@ -91,7 +92,7 @@ const Contact = () => {
       setIsSubmitted(true);
       toast({
         title: "문의 접수 완료",
-        description: formData?.success_message || "문의가 성공적으로 접수되었습니다.",
+        description: formData?.settings?.success_message || "문의가 성공적으로 접수되었습니다.",
       });
     } catch (err) {
       toast({
@@ -136,7 +137,7 @@ const Contact = () => {
               <CheckCircle className="w-16 h-16 text-primary mx-auto mb-4" />
               <h2 className="text-2xl font-bold mb-2">문의 접수 완료</h2>
               <p className="text-muted-foreground mb-6">
-                {formData?.success_message || "문의가 성공적으로 접수되었습니다. 빠른 시일 내에 답변 드리겠습니다."}
+                {formData?.settings?.success_message || "문의가 성공적으로 접수되었습니다. 빠른 시일 내에 답변 드리겠습니다."}
               </p>
               <Button onClick={() => navigate("/")} variant="outline">
                 <ArrowLeft className="w-4 h-4 mr-2" />
@@ -176,7 +177,7 @@ const Contact = () => {
                 {formData?.fields?.map((field) => (
                   <DynamicFormField
                     key={field.name}
-                    field={field}
+                    field={field as FormField}
                     value={formValues[field.name]}
                     onChange={handleFieldChange}
                     error={errors[field.name]}
@@ -194,7 +195,7 @@ const Contact = () => {
                     ) : (
                       <>
                         <Send className="w-4 h-4 mr-2" />
-                        {formData?.submit_button_text || "제출하기"}
+                        {formData?.settings?.submit_button_text || "제출하기"}
                       </>
                     )}
                   </Button>
