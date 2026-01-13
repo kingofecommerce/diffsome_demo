@@ -1,15 +1,15 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams, Link } from "react-router-dom";
-import { useAuth } from "@/contexts/AuthContext";
-import { usePostDetail } from "@/hooks/usePostDetail";
-import { useUpdatePost } from "@/hooks/useUpdatePost";
+import { useAuth } from "@/core/providers/AuthProvider";
+import { usePostDetail } from "@/core/hooks/usePostDetail";
+import { useUpdatePost } from "@/core/hooks/useUpdatePost";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useToast } from "@/hooks/use-toast";
+import { useToast } from "@/core/hooks/use-toast";
 import { ArrowLeft, Loader2, Edit } from "lucide-react";
 import { z } from "zod";
 
@@ -59,6 +59,9 @@ const EditPost = () => {
   const { toast } = useToast();
   const { data, isLoading, error } = usePostDetail(id || "");
   const updatePost = useUpdatePost(id || "");
+
+  // 본인 글인지 확인 (SDK에서 is_mine 필드 제공)
+  const isOwner = data?.data?.is_mine ?? false;
 
   useEffect(() => {
     if (data?.data && !isInitialized) {
@@ -146,6 +149,22 @@ const EditPost = () => {
                 <Link to="/login">로그인</Link>
               </Button>
             </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  if (!isOwner && !isLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center p-4">
+        <Card className="w-full max-w-md border-destructive/30 bg-destructive/5">
+          <CardContent className="pt-6 text-center space-y-4">
+            <Edit className="w-12 h-12 text-destructive mx-auto" />
+            <p className="text-muted-foreground">본인이 작성한 글만 수정할 수 있습니다.</p>
+            <Button variant="outline" asChild>
+              <Link to={`/posts/${id}`}>돌아가기</Link>
+            </Button>
           </CardContent>
         </Card>
       </div>

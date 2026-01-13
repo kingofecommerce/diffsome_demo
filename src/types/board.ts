@@ -5,6 +5,8 @@ export interface Post {
   author: string;
   views: number;
   is_notice: boolean;
+  is_secret: boolean;
+  is_mine: boolean;
   created_at: string;
 }
 
@@ -21,6 +23,8 @@ export interface PostDetail {
   author: string;
   views: number;
   is_notice: boolean;
+  is_secret: boolean;
+  is_mine: boolean;
   board: Board;
   created_at: string;
   updated_at: string;

@@ -1,16 +1,16 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Header } from "@/components/Header";
-import { Footer } from "@/components/Footer";
+import { Header } from "@/themes/default/layouts/Header";
+import { Footer } from "@/themes/default/layouts/Footer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { DynamicFormField } from "@/components/DynamicFormField";
-import { LoadingState } from "@/components/LoadingState";
-import { ErrorState } from "@/components/ErrorState";
-import { useForm } from "@/hooks/useForm";
-import { useSubmitForm } from "@/hooks/useSubmitForm";
-import { useToast } from "@/hooks/use-toast";
-import { useAuth } from "@/contexts/AuthContext";
+import { DynamicFormField } from "@/themes/default/components/DynamicFormField";
+import { LoadingState } from "@/themes/default/components/LoadingState";
+import { ErrorState } from "@/themes/default/components/ErrorState";
+import { useForm } from "@/core/hooks/useForm";
+import { useSubmitForm } from "@/core/hooks/useSubmitForm";
+import { useToast } from "@/core/hooks/use-toast";
+import { useAuth } from "@/core/providers/AuthProvider";
 import { ArrowLeft, Send, CheckCircle } from "lucide-react";
 import type { FormField } from "@/types/form";
 

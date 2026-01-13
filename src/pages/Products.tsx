@@ -1,8 +1,8 @@
-import { Header } from "@/components/Header";
-import { Footer } from "@/components/Footer";
-import { ProductCard } from "@/components/ProductCard";
-import { useProducts } from "@/hooks/useProducts";
-import { ErrorState } from "@/components/ErrorState";
+import { Header } from "@/themes/default/layouts/Header";
+import { Footer } from "@/themes/default/layouts/Footer";
+import { ProductCard } from "@/themes/default/components/ProductCard";
+import { useProducts } from "@/core/hooks/useProducts";
+import { ErrorState } from "@/themes/default/components/ErrorState";
 import { ShoppingBag } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Card, CardContent } from "@/components/ui/card";

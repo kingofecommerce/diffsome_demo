@@ -1,4 +1,4 @@
-import type { BoardComment } from "@back23/promptly-sdk";
+import type { BoardComment } from "@diffsome/sdk";
 
 // SDK의 BoardComment 타입 재export
 export type Comment = BoardComment;

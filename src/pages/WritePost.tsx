@@ -1,13 +1,13 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { useAuth } from "@/contexts/AuthContext";
-import { useCreatePost } from "@/hooks/useCreatePost";
+import { useAuth } from "@/core/providers/AuthProvider";
+import { useCreatePost } from "@/core/hooks/useCreatePost";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useToast } from "@/hooks/use-toast";
+import { useToast } from "@/core/hooks/use-toast";
 import { ArrowLeft, Loader2, FileText } from "lucide-react";
 import { z } from "zod";
 

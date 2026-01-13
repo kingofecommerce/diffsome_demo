@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { ArrowLeft, User, Clock, Eye, Home, ChevronRight, Pin, Edit, Trash2, Loader2 } from "lucide-react";
-import { useAuth } from "@/contexts/AuthContext";
+import { useAuth } from "@/core/providers/AuthProvider";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -18,10 +18,10 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { usePostDetail } from "@/hooks/usePostDetail";
-import { useDeletePost } from "@/hooks/useDeletePost";
-import { useToast } from "@/hooks/use-toast";
-import { CommentList } from "@/components/CommentList";
+import { usePostDetail } from "@/core/hooks/usePostDetail";
+import { useDeletePost } from "@/core/hooks/useDeletePost";
+import { useToast } from "@/core/hooks/use-toast";
+import { CommentList } from "@/themes/default/components/CommentList";
 import { formatDistanceToNow, format } from "date-fns";
 import { ko } from "date-fns/locale";
 
@@ -59,6 +59,9 @@ export default function PostDetail() {
   const deletePost = useDeletePost();
   const { toast } = useToast();
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+
+  // 본인 글인지 확인 (SDK에서 is_mine 필드 제공)
+  const isOwner = data?.data?.is_mine ?? false;
 
   const handleDelete = async () => {
     if (!id) return;
@@ -209,9 +212,9 @@ export default function PostDetail() {
             <ArrowLeft className="w-4 h-4" />
             목록으로 돌아가기
           </Button>
-          {isAuthenticated && (
+          {isOwner && (
             <>
-              <Button 
+              <Button
                 onClick={() => navigate(`/posts/${id}/edit`)}
                 className="gap-2"
               >

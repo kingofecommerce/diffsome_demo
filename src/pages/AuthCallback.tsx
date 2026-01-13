@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { useAuth } from "@/contexts/AuthContext";
-import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/core/providers/AuthProvider";
+import { useToast } from "@/core/hooks/use-toast";
 import { Loader2 } from "lucide-react";
 
-const API_BASE_URL = "https://promptly.webbyon.com/api/demo";
+const API_BASE_URL = "https://diffsome.webbyon.com/api/demo";
+const API_KEY = "pky_zX1JITGIZefP9Fm2oBF9qk7oekwNmlqJ7uRfBXznbRi3P9kAfq2CM6hiBX8B";
 
 const AuthCallback = () => {
   const [searchParams] = useSearchParams();
@@ -44,6 +45,7 @@ const AuthCallback = () => {
         const response = await fetch(`${API_BASE_URL}/auth/me`, {
           headers: {
             "Authorization": `Bearer ${token}`,
+            "X-API-Key": API_KEY,
             "Accept": "application/json",
           },
         });
