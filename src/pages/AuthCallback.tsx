@@ -2,10 +2,8 @@ import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "@/core/providers/AuthProvider";
 import { useToast } from "@/core/hooks/use-toast";
+import { diffsome } from "@/core/lib/diffsome";
 import { Loader2 } from "lucide-react";
-
-const API_BASE_URL = "https://diffsome.webbyon.com/api/demo";
-const API_KEY = "pky_zX1JITGIZefP9Fm2oBF9qk7oekwNmlqJ7uRfBXznbRi3P9kAfq2CM6hiBX8B";
 
 const AuthCallback = () => {
   const [searchParams] = useSearchParams();
@@ -17,7 +15,6 @@ const AuthCallback = () => {
   useEffect(() => {
     const processCallback = async () => {
       const token = searchParams.get("token");
-      const provider = searchParams.get("provider");
       const error = searchParams.get("error");
 
       if (error) {
@@ -40,23 +37,12 @@ const AuthCallback = () => {
         return;
       }
 
-      // Fetch user info with the token
       try {
-        const response = await fetch(`${API_BASE_URL}/auth/me`, {
-          headers: {
-            "Authorization": `Bearer ${token}`,
-            "X-API-Key": API_KEY,
-            "Accept": "application/json",
-          },
-        });
+        // Set token first to authenticate the me() request
+        diffsome.auth.setToken(token);
+        const user = await diffsome.auth.me();
 
-        if (!response.ok) {
-          throw new Error("사용자 정보를 가져올 수 없습니다.");
-        }
-
-        const userData = await response.json();
-        
-        handleSocialCallback(token, userData.data);
+        handleSocialCallback(token, user);
 
         toast({
           title: "로그인 성공",

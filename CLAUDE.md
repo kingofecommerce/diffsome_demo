@@ -1,5 +1,7 @@
 # Diffsome Frontend Starter - React (Vite)
 
+- **GitHub**: https://github.com/kingofecommerce/diffsome_demo
+
 ## 기술 스택
 - React 18 + Vite
 - TypeScript
@@ -68,7 +70,8 @@ src/
 
 ### Core vs Theme 분리
 - **`core/`**: SDK 연동 로직 (수정 주의) - hooks, providers, client
-- **`themes/`**: 디자인/UI (자유롭게 수정 가능) - components, layouts
+- **`themes/default/`**: 컴포넌트 구조와 props 참고용
+- **`themes/새테마명/`**: 디자인을 새롭게 작성하여 테마 생성
 - **`components/ui/`**: shadcn/ui 컴포넌트 (수정 금지)
 
 ### 사용법
