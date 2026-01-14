@@ -12,7 +12,6 @@ import { Card, CardContent } from "@/components/ui/card";
 import { ArrowLeft, Package, ImageOff, ShoppingCart, Minus, Plus, Loader2 } from "lucide-react";
 import { useState, useMemo, useEffect } from "react";
 import { useToast } from "@/core/hooks/use-toast";
-import type { ProductVariant } from "@diffsome/sdk";
 
 const ProductDetail = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -25,11 +24,11 @@ const ProductDetail = () => {
 
   // Initialize selected options when product loads
   useEffect(() => {
-    if (product?.options && product.options.length > 0) {
+    if (product?.attributes && product.attributes.length > 0) {
       const initialOptions: Record<string, string> = {};
-      product.options.forEach((option) => {
-        if (option.values && option.values.length > 0) {
-          initialOptions[option.name] = option.values[0].value;
+      product.attributes.forEach((attr) => {
+        if (attr.values && attr.values.length > 0) {
+          initialOptions[attr.name] = attr.values[0].value;
         }
       });
       setSelectedOptions(initialOptions);
@@ -52,11 +51,11 @@ const ProductDetail = () => {
   }, [product, selectedOptions]);
 
   // Get current price (from variant or product)
-  const currentPrice = selectedVariant?.price ?? product?.price ?? 0;
-  const currentComparePrice = selectedVariant?.compare_price ?? product?.compare_price;
+  const currentPrice = selectedVariant?.final_price ?? product?.sale_price ?? 0;
+  const currentRegularPrice = selectedVariant?.regular_price ?? product?.regular_price;
   const currentStock = selectedVariant?.stock_quantity ?? product?.stock_quantity ?? 0;
   const isInStock = product?.has_options
-    ? selectedVariant?.is_active && selectedVariant?.stock_quantity > 0
+    ? selectedVariant?.is_active && selectedVariant?.in_stock
     : product?.in_stock;
 
   const handleOptionChange = (optionName: string, value: string) => {
@@ -65,6 +64,19 @@ const ProductDetail = () => {
       [optionName]: value,
     }));
     setQuantity(1); // Reset quantity when option changes
+  };
+
+  // Check if a specific option value's variant is in stock
+  const isOptionValueInStock = (attrName: string, value: string) => {
+    if (!product?.variants) return true;
+
+    // Find variants that have this option value
+    const matchingVariants = product.variants.filter(variant =>
+      variant.option_values[attrName] === value
+    );
+
+    // Check if at least one matching variant is in stock
+    return matchingVariants.some(variant => variant.is_active && variant.in_stock);
   };
 
   const handleAddToCart = async () => {
@@ -88,7 +100,7 @@ const ProductDetail = () => {
       });
 
       const optionText = selectedVariant
-        ? ` (${Object.values(selectedVariant.option_values).join(", ")})`
+        ? ` (${selectedVariant.option_string})`
         : "";
 
       toast({
@@ -108,9 +120,12 @@ const ProductDetail = () => {
     return new Intl.NumberFormat("ko-KR").format(price) + "원";
   };
 
-  const discountPercent = currentComparePrice
-    ? Math.round(((currentComparePrice - currentPrice) / currentComparePrice) * 100)
-    : null;
+  // Use discount_percent from product or calculate from variant
+  const discountPercent = product?.discount_percent ?? (
+    currentRegularPrice && currentRegularPrice > currentPrice
+      ? Math.round(((currentRegularPrice - currentPrice) / currentRegularPrice) * 100)
+      : null
+  );
 
   const handleQuantityChange = (delta: number) => {
     const newQuantity = quantity + delta;
@@ -226,43 +241,76 @@ const ProductDetail = () => {
             {/* Price */}
             <div className="space-y-1">
               <div className="flex items-baseline gap-3">
-                <span className="text-3xl font-bold text-foreground">
-                  {formatPrice(currentPrice)}
-                </span>
-                {currentComparePrice && currentComparePrice > currentPrice && (
-                  <span className="text-xl text-muted-foreground line-through">
-                    {formatPrice(currentComparePrice)}
+                {/* Show price range for option products without selection */}
+                {product.has_options && !selectedVariant && product.min_sale_price !== product.max_sale_price ? (
+                  <span className="text-3xl font-bold text-foreground">
+                    {formatPrice(product.min_sale_price ?? product.sale_price)} ~ {formatPrice(product.max_sale_price ?? product.sale_price)}
                   </span>
+                ) : (
+                  <>
+                    <span className="text-3xl font-bold text-foreground">
+                      {formatPrice(currentPrice)}
+                    </span>
+                    {currentRegularPrice && currentRegularPrice > currentPrice && (
+                      <span className="text-xl text-muted-foreground line-through">
+                        {formatPrice(currentRegularPrice)}
+                      </span>
+                    )}
+                  </>
                 )}
               </div>
             </div>
 
             {/* Options Selector */}
-            {product.has_options && product.options && product.options.length > 0 && (
+            {product.has_options && product.attributes && product.attributes.length > 0 && (
               <div className="space-y-4">
-                {product.options.map((option) => (
-                  <div key={option.id}>
+                {product.attributes.map((attr) => (
+                  <div key={attr.id}>
                     <label className="block text-sm font-medium mb-2">
-                      {option.name}
+                      {attr.name}
                     </label>
                     <div className="flex flex-wrap gap-2">
-                      {option.values.map((value) => {
-                        const isSelected = selectedOptions[option.name] === value.value;
+                      {attr.values?.map((value) => {
+                        const isSelected = selectedOptions[attr.name] === value.value;
+                        const inStock = isOptionValueInStock(attr.name, value.value);
                         return (
                           <Button
                             key={value.id}
                             variant={isSelected ? "default" : "outline"}
                             size="sm"
-                            onClick={() => handleOptionChange(option.name, value.value)}
-                            className="min-w-[60px]"
+                            onClick={() => handleOptionChange(attr.name, value.value)}
+                            className={`min-w-[60px] relative ${!inStock ? "opacity-50" : ""}`}
+                            disabled={!inStock}
                           >
+                            {value.color_code && (
+                              <span
+                                className="w-4 h-4 rounded-full mr-2 border"
+                                style={{ backgroundColor: value.color_code }}
+                              />
+                            )}
                             {value.value}
+                            {!inStock && (
+                              <span className="absolute -top-1 -right-1 text-[10px] bg-muted text-muted-foreground px-1 rounded">
+                                품절
+                              </span>
+                            )}
                           </Button>
                         );
                       })}
                     </div>
                   </div>
                 ))}
+
+                {/* Selected variant info */}
+                {selectedVariant && (
+                  <div className="p-3 bg-muted rounded-lg text-sm">
+                    <span className="font-medium">선택: </span>
+                    <span>{selectedVariant.option_string}</span>
+                    {!selectedVariant.in_stock && (
+                      <Badge variant="destructive" className="ml-2">품절</Badge>
+                    )}
+                  </div>
+                )}
               </div>
             )}
 
@@ -271,6 +319,11 @@ const ProductDetail = () => {
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <Package className="w-4 h-4" />
                 <span>재고 {currentStock}개</span>
+                {product.is_low_stock && (
+                  <Badge variant="outline" className="text-orange-600 border-orange-300">
+                    재고 부족
+                  </Badge>
+                )}
               </div>
             )}
 
